@@ -30,7 +30,7 @@ This allows some Just In Time compilation to be used afterwards.
 
 ## Centroids and Thresholds
 
-Despite my best efforts to implement this following script, the results weren't conclusive. I have therefore omitted this part from my report.
+Despite my best efforts to implement this script, the results weren't conclusive. I have therefore omitted this part from my report.
 
 # Triplet Face
 
