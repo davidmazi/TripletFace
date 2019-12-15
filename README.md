@@ -1,5 +1,37 @@
 Triplet loss for facial recognition.
 
+# Student Report
+
+By playing with the hyperparameters, I realized that changing the architecture from Resnet-18 to Resnet-152, a batch size of 64, with 5 epochs and 16 workers was efficient enough, the training time was shorter than with other tested values, and the visualization appears to be sharper.
+
+The architecture change was motivated by the [PyTorch docs](https://pytorch.org/docs/stable/torchvision/models.html), as they state the 1-crop error rates of this architecture are lower than the Resnet-18's.
+
+## JIT Compile
+
+On Google Colab, the code block to JIT Compile the model is the following :
+
+```python
+%cd TripletFace
+import torch
+
+from tripletface.core.model import Encoder
+
+model = Encoder(64)
+weights = torch.load("/content/TripletFace/model/model.pt")['model']
+model.load_state_dict( weights )
+#These values were defined by looking at the docs and reading some posts on StackOverflow
+jit_model = torch.jit.trace( model, torch.rand(3, 3, 3, 3) )
+torch.jit.save( jit_model, "/content/TripletFace/JIT/jitcompile.pt" )
+
+%cd ..
+```
+
+This allows some Just In Time compilation to be used afterwards.
+
+## Centroids and Thresholds
+
+Despite my best efforts to implement this following script, the results weren't conclusive. I have therefore omitted this part from my report.
+
 # Triplet Face
 
 The repository contains code for the application of triplet loss training to the
@@ -17,6 +49,7 @@ FC part has been replaced to be trained to output latent variables for the
 facial image input.
 
 The dataset needs to be formatted in the following form:
+
 ```
 dataset/
 | test/
@@ -45,6 +78,7 @@ dataset/
 ## Install
 
 Install all dependencies ( pip command may need sudo ):
+
 ```bash
 cd TripletFace/
 pip3 install -r requirements.txt
@@ -53,6 +87,7 @@ pip3 install -r requirements.txt
 ## Usage
 
 For training:
+
 ```bash
 usage: train.py [-h] -s DATASET_PATH -m MODEL_PATH [-i INPUT_SIZE]
                 [-z LATENT_SIZE] [-b BATCH_SIZE] [-e EPOCHS]
@@ -73,20 +108,21 @@ optional arguments:
 
 ## References
 
-* Resnet Paper: [Arxiv](https://arxiv.org/pdf/1512.03385.pdf)
-* Triplet Loss Paper: [Arxiv](https://arxiv.org/pdf/1503.03832.pdf)
-* TripletTorch Helper Module: [Github](https://github.com/TowardHumanizedInteraction/TripletTorch)
+- Resnet Paper: [Arxiv](https://arxiv.org/pdf/1512.03385.pdf)
+- Triplet Loss Paper: [Arxiv](https://arxiv.org/pdf/1503.03832.pdf)
+- TripletTorch Helper Module: [Github](https://github.com/TowardHumanizedInteraction/TripletTorch)
 
 ## Todo ( For the students )
 
 **Deadline Decembre 13th 2019 at 12pm**
 
 The students are asked to complete the following tasks:
-* Fork the Project
-* Improve the model by playing with Hyperparameters and by changing the Architecture ( may not use resnet )
-* JIT compile the model ( see [Documentation](https://pytorch.org/docs/stable/jit.html#torch.jit.trace) )
-* Add script to generate Centroids and Thesholds using few face images from one person
-* Generate those for each of the student included in the dataset
-* Add inference script in order to use the final model
-* Change README.md in order to include the student choices explained and a table containing the Centroids and Thesholds for each student of the dataset with a vizualisation ( See the one above )
-* Send the github link by mail
+
+- Fork the Project
+- Improve the model by playing with Hyperparameters and by changing the Architecture ( may not use resnet )
+- JIT compile the model ( see [Documentation](https://pytorch.org/docs/stable/jit.html#torch.jit.trace) )
+- Add script to generate Centroids and Thesholds using few face images from one person
+- Generate those for each of the student included in the dataset
+- Add inference script in order to use the final model
+- Change README.md in order to include the student choices explained and a table containing the Centroids and Thesholds for each student of the dataset with a vizualisation ( See the one above )
+- Send the github link by mail
